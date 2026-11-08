@@ -1,0 +1,348 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ */
+/* Design tokens — light theme, purple brand                           */
+/* ------------------------------------------------------------------ */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Sora", "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Text (purple-tinted ink) */
+  --color-ink-950: #150f2e;
+  --color-ink-900: #1d1740;
+  --color-ink-700: #3d3760;
+  --color-ink-600: #57527a;
+  --color-ink-500: #6b6690;
+  --color-ink-300: #b4b0cf;
+
+  /* Lilac surfaces */
+  --color-lilac-50: #faf8ff;
+  --color-lilac-100: #f3eefe;
+  --color-lilac-200: #e8e0fb;
+
+  --color-live: #e11d48;
+
+  --shadow-soft: 0 1px 2px rgba(76, 29, 149, 0.05), 0 10px 30px -12px rgba(76, 29, 149, 0.16);
+  --shadow-lift: 0 2px 4px rgba(76, 29, 149, 0.06), 0 28px 50px -18px rgba(76, 29, 149, 0.32);
+  --shadow-brand: 0 1px 0 rgba(255, 255, 255, 0.3) inset, 0 12px 28px -8px rgba(124, 58, 237, 0.55);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                */
+/* ------------------------------------------------------------------ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--color-lilac-50);
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: #ddd6fe;
+    color: var(--color-ink-950);
+  }
+
+  :focus-visible {
+    outline: 2px solid #7c3aed;
+    outline-offset: 3px;
+    border-radius: 0.5rem;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.025em;
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--color-lilac-50);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #d4c8f8;
+    border-radius: 999px;
+    border: 2px solid var(--color-lilac-50);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #b9a6f3;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Components / utilities                                              */
+/* ------------------------------------------------------------------ */
+@layer components {
+  .text-gradient {
+    background-image: linear-gradient(110deg, #6d28d9 0%, #9333ea 50%, #c026d3 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .text-gradient-animated {
+    background-image: linear-gradient(110deg, #6d28d9, #9333ea, #c026d3, #9333ea, #6d28d9);
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gradient-pan 8s linear infinite;
+  }
+
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(124, 58, 237, 0.08) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(124, 58, 237, 0.08) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 0%, #000 20%, transparent 75%);
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 0%, #000 20%, transparent 75%);
+  }
+
+  /* Scroll reveal ------------------------------------------------- */
+  .reveal {
+    opacity: 0;
+    transition:
+      opacity 0.9s var(--ease-out-expo),
+      transform 0.9s var(--ease-out-expo),
+      filter 0.9s var(--ease-out-expo);
+    transition-delay: var(--reveal-delay, 0ms);
+    will-change: opacity, transform;
+  }
+  .reveal-up {
+    transform: translate3d(0, 28px, 0);
+    filter: blur(4px);
+  }
+  .reveal-scale {
+    transform: scale(0.94) translate3d(0, 16px, 0);
+    filter: blur(4px);
+  }
+  .reveal-left {
+    transform: translate3d(-32px, 0, 0);
+  }
+  .reveal-right {
+    transform: translate3d(32px, 0, 0);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  /* Mount animation (hero) ---------------------------------------- */
+  .enter {
+    opacity: 0;
+    animation: fade-up 1s var(--ease-out-expo) both;
+    animation-delay: var(--enter-delay, 0ms);
+  }
+
+  /* Primary button shine ------------------------------------------ */
+  .btn-shine {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .btn-shine::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.4) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0.9s var(--ease-out-expo);
+  }
+  .btn-shine:hover::after {
+    transform: translateX(120%);
+  }
+
+  /* Carousel edge fade --------------------------------------------- */
+  .marquee-mask {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+    mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  }
+
+  /* Hide scrollbars on carousels (still scrollable) ----------------- */
+  .no-scrollbar {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Live / status dot ------------------------------------------------ */
+  .live-dot {
+    position: relative;
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 999px;
+    background: var(--color-live);
+  }
+  .live-dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: inherit;
+    animation: pulse-ring 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  .live-dot-brand {
+    background: #8b5cf6;
+  }
+
+  /* Check mark draw */
+  .draw-check {
+    stroke-dasharray: 30;
+    stroke-dashoffset: 30;
+    animation: draw 0.6s 0.2s var(--ease-out-expo) forwards;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Keyframes                                                           */
+/* ------------------------------------------------------------------ */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(30px, -24px, 0) scale(1.06);
+  }
+  66% {
+    transform: translate3d(-24px, 18px, 0) scale(0.97);
+  }
+}
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  80%,
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+@keyframes gradient-pan {
+  from {
+    background-position: 0% 50%;
+  }
+  to {
+    background-position: 220% 50%;
+  }
+}
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Right-to-left & Arabic                                              */
+/* ------------------------------------------------------------------ */
+
+/* Forward arrows mirror in RTL and nudge the right way on hover. */
+.icon-dir {
+  transition: translate 0.3s var(--ease-out-expo);
+}
+[dir="rtl"] .icon-dir {
+  transform: scaleX(-1);
+}
+.group\/btn:hover .icon-dir,
+.group\/pill:hover .icon-dir {
+  translate: 0.25rem 0;
+}
+[dir="rtl"] .group\/btn:hover .icon-dir,
+[dir="rtl"] .group\/pill:hover .icon-dir {
+  translate: -0.25rem 0;
+}
+
+/* Arabic needs its own typeface, and letter-spacing breaks joined letters. */
+:lang(ar) {
+  --font-sans: "Cairo", "Segoe UI", Tahoma, ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Cairo", "Segoe UI", Tahoma, ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-sans);
+}
+:lang(ar),
+:lang(ar) * {
+  letter-spacing: normal !important;
+}
+:lang(ar) h1 {
+  line-height: 1.35 !important;
+}
+:lang(ar) h2,
+:lang(ar) h3 {
+  line-height: 1.3 !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Reduced motion                                                      */
+/* ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal,
+  .enter {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
+}
